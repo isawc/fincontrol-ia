@@ -2,9 +2,93 @@ document.addEventListener('DOMContentLoaded', () => {
     // ==========================================
     // SPA NAVIGATION LOGIC
     // ==========================================
+    const API_URL = "http://localhost:8000";
     const menuItems = document.querySelectorAll('.menu-item');
     const dashboardViews = document.querySelectorAll('main.view');
     const aiPanels = document.querySelectorAll('aside.view');
+    const authOverlay = document.getElementById('authOverlay');
+    const tabLogin = document.getElementById('tabLogin');
+    const tabRegister = document.getElementById('tabRegister');
+    const formLogin = document.getElementById('formLogin');
+    const formRegister = document.getElementById('formRegister');
+    const authError = document.getElementById('authError');
+
+    const showAuthError = (msg) => {
+        authError.textContent = msg;
+        authError.style.display = 'block';
+    };
+
+    const hideAuth = (userId, name) => {
+        localStorage.setItem('user_id', userId);
+        localStorage.setItem('user_name', name);
+        authOverlay.classList.add('hidden');
+        fetchOverview();
+        fetchUser();
+    };
+
+    const checkAuth = () => {
+        const userId = localStorage.getItem('user_id');
+        if (userId) {
+            authOverlay.classList.add('hidden');
+        }
+    };
+
+    tabLogin.addEventListener('click', () => {
+        tabLogin.classList.add('active');
+        tabRegister.classList.remove('active');
+        formLogin.style.display = 'block';
+        formRegister.style.display = 'none';
+        authError.style.display = 'none';
+    });
+
+    tabRegister.addEventListener('click', () => {
+        tabRegister.classList.add('active');
+        tabLogin.classList.remove('active');
+        formRegister.style.display = 'block';
+        formLogin.style.display = 'none';
+        authError.style.display = 'none';
+    });
+
+    document.getElementById('btnLogin').addEventListener('click', async () => {
+        const email = document.getElementById('loginEmail').value;
+        const password = document.getElementById('loginPassword').value;
+        if (!email || !password) return showAuthError('Preencha todos os campos');
+
+        const form = new FormData();
+        form.append('username', email);
+        form.append('password', password);
+
+        try {
+            const res = await fetch(`${API_URL}/auth/login`, { method: 'POST', body: form });
+            const data = await res.json();
+            if (!res.ok) return showAuthError(data.detail || 'Erro ao fazer login');
+            hideAuth(data.user_id, data.name);
+        } catch {
+            showAuthError('Erro de conexão com o servidor');
+        }
+    });
+
+    document.getElementById('btnRegister').addEventListener('click', async () => {
+        const name = document.getElementById('registerName').value;
+        const email = document.getElementById('registerEmail').value;
+        const password = document.getElementById('registerPassword').value;
+        if (!name || !email || !password) return showAuthError('Preencha todos os campos');
+
+        try {
+            const res = await fetch(`${API_URL}/auth/register`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, email, password })
+            });
+            const data = await res.json();
+            if (!res.ok) return showAuthError(data.detail || 'Erro ao cadastrar');
+            hideAuth(data.user_id, data.name);
+        } catch {
+            showAuthError('Erro de conexão com o servidor');
+        }
+    });
+
+    checkAuth();
 
     menuItems.forEach(item => {
         item.addEventListener('click', (e) => {
@@ -134,11 +218,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // ==========================================
     // BACKEND INTEGRATION (API CALLS)
     // ==========================================
-    const API_URL = "http://localhost:8000";
 
     const fetchOverview = async (silent = false) => {
         try {
-            const res = await fetch(`${API_URL}/transactions/?user_id=1`);
+            const res = await fetch(`${API_URL}/transactions/?user_id=${localStorage.getItem('user_id') || 1}`);
             if (res.ok) {
                 const transactions = await res.json();
 
@@ -191,7 +274,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Busca e renderiza transações reais na aba Transactions
     const fetchTransactions = async () => {
         try {
-            const res = await fetch(`${API_URL}/transactions/?user_id=1`);
+            const res = await fetch(`${API_URL}/transactions/?user_id=${localStorage.getItem('user_id') || 1}`);
             if (!res.ok) return;
             const transactions = await res.json();
             renderTransactions(transactions);
@@ -232,7 +315,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 tabs.forEach(t => t.classList.remove('active'));
                 tab.classList.add('active');
                 const filter = tab.textContent.trim().toLowerCase();
-                const res = await fetch(`${API_URL}/transactions/?user_id=1`);
+                const res = await fetch(`${API_URL}/transactions/?user_id=${localStorage.getItem('user_id') || 1}`);
                 if (!res.ok) return;
                 const all = await res.json();
                 const filtered = filter === 'all' ? all
@@ -249,7 +332,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const fetchUser = async () => {
         try {
-            const res = await fetch(`${API_URL}/transactions/?user_id=1`);
+            const res = await fetch(`${API_URL}/transactions/?user_id=${localStorage.getItem('user_id') || 1}`);
             if (!res.ok) return;
 
             const userRes = await fetch(`${API_URL}/users/1`);
@@ -470,7 +553,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const res = await fetch(`${API_URL}/ai/parse`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: text, user_id: 1 })
+                    body: JSON.stringify({ message: text, user_id: parseInt(localStorage.getItem('user_id') || 1) })
                 });
 
                 typingMsg.remove(); // Remove thinking message

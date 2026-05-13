@@ -12,6 +12,51 @@
 </head>
 
 <body>
+
+    <div class="auth-overlay" id="authOverlay">
+        <div class="auth-box">
+         <div class="auth-logo">
+            <i class="ph-fill ph-pulse"></i>
+            <span>FinControl IA</span>
+        </div>
+
+        <div class="auth-tabs">
+            <button class="auth-tab active" id="tabLogin">Login</button>
+            <button class="auth-tab" id="tabRegister">Cadastro</button>
+        </div>
+
+        <div id="formLogin">
+            <div class="auth-field">
+                <label>Email</label>
+                <input type="email" id="loginEmail" placeholder="seu@email.com">
+            </div>
+            <div class="auth-field">
+                <label>Senha</label>
+                <input type="password" id="loginPassword" placeholder="••••••••">
+            </div>
+            <button class="btn btn-primary" style="width:100%; margin-top:8px;" id="btnLogin">Entrar</button>
+        </div>
+
+        <div id="formRegister" style="display:none;">
+            <div class="auth-field">
+                <label>Nome</label>
+                <input type="text" id="registerName" placeholder="Seu nome">
+            </div>
+            <div class="auth-field">
+                <label>Email</label>
+                <input type="email" id="registerEmail" placeholder="seu@email.com">
+            </div>
+            <div class="auth-field">
+                <label>Senha</label>
+                <input type="password" id="registerPassword" placeholder="••••••••">
+            </div>
+            <button class="btn btn-primary" style="width:100%; margin-top:8px;" id="btnRegister">Criar conta</button>
+        </div>
+
+        <p id="authError" style="color:#FF4C4C; font-size:13px; margin-top:8px; display:none;"></p>
+    </div>
+</div>
+
     <div class="app-container">
         <!-- Left Sidebar (Persistent) -->
         <aside class="sidebar">
