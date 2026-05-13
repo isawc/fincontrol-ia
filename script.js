@@ -33,12 +33,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    document.getElementById('btnLogout').addEventListener('click', () => {
-        localStorage.removeItem('user_id');
-        localStorage.removeItem('user_name');
-        authOverlay.classList.remove('hidden');
-    });
-
     tabLogin.addEventListener('click', () => {
         tabLogin.classList.add('active');
         tabRegister.classList.remove('active');
@@ -95,7 +89,15 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     checkAuth();
-    
+
+    const btnLogout = document.getElementById('btnLogout');
+    if (btnLogout) {
+        btnLogout.addEventListener('click', () => {
+            localStorage.removeItem('user_id');
+            localStorage.removeItem('user_name');
+            authOverlay.classList.remove('hidden');
+        });
+    }
 
     menuItems.forEach(item => {
         item.addEventListener('click', (e) => {
@@ -342,7 +344,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const res = await fetch(`${API_URL}/transactions/?user_id=${localStorage.getItem('user_id') || 1}`);
             if (!res.ok) return;
 
-            const userRes = await fetch(`${API_URL}/users/1`);
+            const userRes = await fetch(`${API_URL}/users/${localStorage.getItem('user_id') || 1}`);
             if (!userRes.ok) return;
             const user = await userRes.json();
 
