@@ -28,6 +28,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (targetDashboard) targetDashboard.classList.add('active');
             if (targetAiPanel) targetAiPanel.classList.add('active');
+
+            if (target === 'transactions') {
+                fetchTransactions();
+                setupTransactionFilters();
+            }
         });
     });
 
@@ -189,16 +194,36 @@ document.addEventListener('DOMContentLoaded', () => {
             const res = await fetch(`${API_URL}/transactions/?user_id=1`);
             if (!res.ok) return;
             const transactions = await res.json();
+            renderTransactions(transactions);
+        } catch (error) {
+            console.error('Erro ao buscar transações:', error);
+        }
+    };
 
-            const container = document.querySelector('#transactions-dashboard .transactions-container');
-            if (!container) return;
-
-            if (transactions.length === 0) {
-                container.innerHTML = '<p style="color: var(--text-muted); padding: 20px;">Nenhuma transação encontrada.</p>';
-                return;
-            }
-    
-    setupTransactionFilters();
+    const renderTransactions = (transactions) => {
+        const container = document.querySelector('#transactions-dashboard .transactions-container');
+        if (!container) return;
+        container.innerHTML = transactions.length === 0
+            ? '<p style="color: var(--text-muted); padding: 20px;">Nenhuma transação encontrada.</p>'
+            : transactions.map(tx => {
+                const date = new Date(tx.date).toLocaleDateString('pt-BR');
+                const isIncome = tx.type === 'income';
+                return `
+                    <div class="transaction-item">
+                        <div class="tx-icon ${isIncome ? 'income' : 'expense'}">
+                            <i class="ph ${isIncome ? 'ph-arrow-circle-up' : 'ph-arrow-circle-down'}"></i>
+                        </div>
+                        <div class="tx-info">
+                            <h4>${tx.description || tx.category}</h4>
+                            <span>${tx.category} • ${date}</span>
+                        </div>
+                        <div class="tx-amount ${isIncome ? 'positive' : 'negative'}">
+                            ${isIncome ? '+' : '-'}R$${tx.amount.toFixed(2)}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+    };
 
     const setupTransactionFilters = () => {
         const tabs = document.querySelectorAll('#transactions-dashboard .tab-btn');
@@ -206,74 +231,20 @@ document.addEventListener('DOMContentLoaded', () => {
             tab.addEventListener('click', async () => {
                 tabs.forEach(t => t.classList.remove('active'));
                 tab.classList.add('active');
-
                 const filter = tab.textContent.trim().toLowerCase();
                 const res = await fetch(`${API_URL}/transactions/?user_id=1`);
                 if (!res.ok) return;
                 const all = await res.json();
-
                 const filtered = filter === 'all' ? all
                     : filter === 'income' ? all.filter(tx => tx.type === 'income')
                     : filter === 'expenses' ? all.filter(tx => tx.type === 'expense')
                     : all;
-
-                const container = document.querySelector('#transactions-dashboard .transactions-container');
-                if (!container) return;
-
-                container.innerHTML = filtered.length === 0
-                    ? '<p style="color: var(--text-muted); padding: 20px;">Nenhuma transação encontrada.</p>'
-                    : filtered.map(tx => {
-                        const date = new Date(tx.date).toLocaleDateString('pt-BR');
-                        const isIncome = tx.type === 'income';
-                        return `
-                            <div class="transaction-item">
-                                <div class="tx-icon ${isIncome ? 'income' : 'expense'}">
-                                    <i class="ph ${isIncome ? 'ph-arrow-circle-up' : 'ph-arrow-circle-down'}"></i>
-                                </div>
-                                <div class="tx-info">
-                                    <h4>${tx.description || tx.category}</h4>
-                                    <span>${tx.category} • ${date}</span>
-                                </div>
-                                <div class="tx-amount ${isIncome ? 'positive' : 'negative'}">
-                                    ${isIncome ? '+' : '-'}R$${tx.amount.toFixed(2)}
-                                </div>
-                            </div>
-                        `;
-                    }).join('');
+                renderTransactions(filtered);
             });
         });
     };
 
-            container.innerHTML = transactions.map(tx => {
-                const date = new Date(tx.date).toLocaleDateString('pt-BR');
-                const isIncome = tx.type === 'income';
-                const icon = isIncome ? 'ph-arrow-circle-up' : 'ph-arrow-circle-down';
-                const colorClass = isIncome ? 'income' : 'expense';
-                const signal = isIncome ? '+' : '-';
-
-                return `
-                    <div class="transaction-item">
-                        <div class="tx-icon ${colorClass}">
-                            <i class="ph ${icon}"></i>
-                        </div>
-                        <div class="tx-info">
-                            <h4>${tx.description || tx.category}</h4>
-                            <span>${tx.category} • ${date}</span>
-                        </div>
-                        <div class="tx-amount ${isIncome ? 'positive' : 'negative'}">
-                            ${signal}R$${tx.amount.toFixed(2)}
-                        </div>
-                    </div>
-                `;
-            }).join('');
-
-        } catch (error) {
-            console.error('Erro ao buscar transações:', error);
-        }
-    };
-
     // Load initial data
-    fetchTransactions();
     fetchOverview();
 
     const fetchUser = async () => {
