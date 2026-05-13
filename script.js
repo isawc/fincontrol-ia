@@ -131,7 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // ==========================================
     const API_URL = "http://localhost:8000";
 
-    const fetchOverview = async () => {
+    const fetchOverview = async (silent = false) => {
         try {
             const res = await fetch(`${API_URL}/transactions/?user_id=1`);
             if (res.ok) {
@@ -163,7 +163,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         } catch (error) {
             console.error("Error fetching overview:", error);
-            showToast("Failed to connect to backend", "error");
+            if (!silent) showToast("Failed to connect to backend", "error");
         }
     };
 
@@ -384,8 +384,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     chatArea.insertAdjacentHTML('beforeend', aiHtml);
 
                     if (data.action_taken) {
-                        fetchOverview();
                         showToast('Transação registrada com sucesso! 💰', 'success');
+                        fetchOverview(true);
                     }
                 } else {
                     throw new Error("Server error");
