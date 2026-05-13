@@ -33,6 +33,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    document.getElementById('btnLogout').addEventListener('click', () => {
+        localStorage.removeItem('user_id');
+        localStorage.removeItem('user_name');
+        authOverlay.classList.remove('hidden');
+    });
+
     tabLogin.addEventListener('click', () => {
         tabLogin.classList.add('active');
         tabRegister.classList.remove('active');
@@ -89,6 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     checkAuth();
+    
 
     menuItems.forEach(item => {
         item.addEventListener('click', (e) => {
