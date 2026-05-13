@@ -209,18 +209,18 @@ document.addEventListener('DOMContentLoaded', () => {
         confirmAddMoneyBtn.addEventListener('click', () => {
             const amount = addMoneyAmountInput.value;
             if (!amount || amount <= 0) {
-                alert('Please enter a valid amount.');
+                alert('Informe um valor válido.');
                 return;
             }
 
             // In a real app, send to backend here
             const originalText = confirmAddMoneyBtn.innerHTML;
-            confirmAddMoneyBtn.innerHTML = '<i class="ph ph-spinner ph-spin"></i> Processing...';
+                confirmAddMoneyBtn.innerHTML = '<i class="ph ph-spinner ph-spin"></i> Processando...';
             confirmAddMoneyBtn.style.opacity = '0.8';
             confirmAddMoneyBtn.style.pointerEvents = 'none';
 
             setTimeout(() => {
-                confirmAddMoneyBtn.innerHTML = '<i class="ph ph-check-circle"></i> Success!';
+                confirmAddMoneyBtn.innerHTML = '<i class="ph ph-check-circle"></i> Concluído';
                 confirmAddMoneyBtn.style.backgroundColor = '#008F4C';
                 confirmAddMoneyBtn.style.color = '#FFF';
 
@@ -293,7 +293,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         } catch (error) {
             console.error("Error fetching overview:", error);
-            if (!silent) showToast("Failed to connect to backend", "error");
+            if (!silent) showToast("Não foi possível conectar ao backend", "error");
         }
     };
 
@@ -344,9 +344,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 const res = await authFetch(`${API_URL}/transactions/`);
                 if (!res.ok) return;
                 const all = await res.json();
-                const filtered = filter === 'all' ? all
-                    : filter === 'income' ? all.filter(tx => tx.type === 'income')
-                    : filter === 'expenses' ? all.filter(tx => tx.type === 'expense')
+                const filtered = filter === 'todas' ? all
+                    : filter === 'receitas' ? all.filter(tx => tx.type === 'income')
+                    : filter === 'despesas' ? all.filter(tx => tx.type === 'expense')
                     : all;
                 renderTransactions(filtered);
             });
@@ -565,7 +565,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Show Typing Indicator
             const typingHtml = `
                 <div class="message ai-message typing-indicator" id="typing-${Date.now()}">
-                    <div class="bubble"><i class="ph ph-spinner ph-spin" style="font-size: 18px;"></i> AI is thinking...</div>
+                    <div class="bubble"><i class="ph ph-spinner ph-spin" style="font-size: 18px;"></i> Analisando...</div>
                 </div>
             `;
             chatArea.insertAdjacentHTML('beforeend', typingHtml);
@@ -602,7 +602,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             } catch (error) {
                 typingMsg.remove();
-                showToast("AI Request Failed.", "error");
+                showToast("Não foi possível processar a mensagem.", "error");
             }
 
             const newAiMsg = chatArea.lastElementChild;
@@ -644,29 +644,29 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // Header Actions
-    handleAction('.header-actions .icon-btn:has(.ph-bell)', 'You have no new notifications.', 'info');
-    handleAction('.header-actions .icon-btn:has(.ph-gear)', 'Settings panel is under construction.', 'info');
+    handleAction('.header-actions .icon-btn:has(.ph-bell)', 'Você não tem novas notificações.', 'info');
+    handleAction('.header-actions .icon-btn:has(.ph-gear)', 'Configurações em desenvolvimento.', 'info');
 
     // Sidebar Actions
-    handleAction('.upgrade-btn', 'Redirecting to secure payment gateway...', 'success');
-    handleAction('.user-profile', 'Opening user profile settings...', 'info');
+    handleAction('.upgrade-btn', 'Plano premium em desenvolvimento.', 'info');
+    handleAction('.user-profile', 'Perfil do usuário em desenvolvimento.', 'info');
 
     // Dashboard Specific Actions
-    handleAction('.balance-actions .btn-secondary', 'Opening quick-send modal...', 'info');
-    handleAction('main#transactions-dashboard .header-actions .btn-secondary:nth-child(1)', 'Advanced filters applied.', 'success');
-    handleAction('main#transactions-dashboard .header-actions .btn-secondary:nth-child(2)', 'Exporting CSV of transactions...', 'success');
+    handleAction('.balance-actions .btn-secondary', 'Envio rápido em desenvolvimento.', 'info');
+    handleAction('main#transactions-dashboard .header-actions .btn-secondary:nth-child(1)', 'Filtros em desenvolvimento.', 'info');
+    handleAction('main#transactions-dashboard .header-actions .btn-secondary:nth-child(2)', 'Exportação em desenvolvimento.', 'info');
 
     // Goals Actions
-    handleAction('main#goals-dashboard .header-actions .btn-primary', 'Opening Goal Creator...', 'info');
-    handleAction('.goal-suggestion .btn-secondary', 'Bonus of $1,200 applied to your goal!', 'success');
-    handleAction('.goal-header .icon-btn', 'Goal options menu opened.', 'info');
-    handleAction('.add-goal-card', 'Opening Goal Creator...', 'info');
+    handleAction('main#goals-dashboard .header-actions .btn-primary', 'Cadastro de metas em desenvolvimento.', 'info');
+    handleAction('.goal-suggestion .btn-secondary', 'Ação de meta em desenvolvimento.', 'info');
+    handleAction('.goal-header .icon-btn', 'Opções da meta em desenvolvimento.', 'info');
+    handleAction('.add-goal-card', 'Cadastro de metas em desenvolvimento.', 'info');
 
     // Investments Actions
-    handleAction('main#investments-dashboard .header-actions .btn-secondary', 'Auto-Invest rules configured.', 'success');
-    handleAction('main#investments-dashboard .header-actions .btn-primary', 'Marketplace opening...', 'info');
-    handleAction('.insight-banner .btn-secondary', 'Starting portfolio rebalance advisor...', 'success');
+    handleAction('main#investments-dashboard .header-actions .btn-secondary', 'Investimentos automáticos em desenvolvimento.', 'info');
+    handleAction('main#investments-dashboard .header-actions .btn-primary', 'Área de investimentos em desenvolvimento.', 'info');
+    handleAction('.insight-banner .btn-secondary', 'Análise de carteira em desenvolvimento.', 'info');
 
     // AI Panel Header Details
-    handleAction('.ai-header .icon-btn', 'AI Assistant settings opened.', 'info');
+    handleAction('.ai-header .icon-btn', 'Configurações da IA em desenvolvimento.', 'info');
 });

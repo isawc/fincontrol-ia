@@ -1,92 +1,116 @@
-# TG - Controle Financeiro com IA Integrada ao WhatsApp
+# FinControl IA
 
-## 📖 Descrição do Projeto
+Plataforma de controle financeiro pessoal com dashboard web, autenticação JWT, registro de transações e integração com IA para interpretar mensagens financeiras.
 
-Este projeto tem como objetivo o desenvolvimento de uma plataforma web de controle financeiro pessoal com integração a Inteligência Artificial aplicada ao WhatsApp.
+O projeto foi desenvolvido como trabalho acadêmico e também como evolução prática de backend, frontend e integração com serviços externos.
 
-A proposta é permitir que o usuário envie informações financeiras por meio de mensagens de texto, áudio ou imagem (comprovantes) no WhatsApp, e que a IA interprete esses dados, identifique valores recebidos ou enviados, reconheça datas e registre automaticamente as transações no sistema.
+## Sobre o Projeto
 
-O sistema busca oferecer uma forma prática e acessível de organização financeira, utilizando tecnologia para simplificar o registro de receitas e despesas.
+A proposta do FinControl IA é permitir que o usuário acompanhe receitas, despesas e saldo em uma interface web, além de registrar movimentações financeiras a partir de mensagens em linguagem natural.
 
----
+Exemplo:
 
-## 🎯 Objetivo do Trabalho
+```text
+gastei 35 reais no mercado
+```
 
-Desenvolver uma aplicação web de controle financeiro capaz de integrar-se a uma solução baseada em Inteligência Artificial conectada ao WhatsApp, permitindo:
+A IA interpreta a mensagem, identifica valor, tipo, categoria e descrição, e registra a transação no sistema.
 
-- Leitura de mensagens em texto
-- Interpretação de áudios
-- Processamento de imagens (comprovantes)
-- Identificação automática de:
-  - Valor da transação
-  - Tipo (receita ou despesa)
-  - Data
-- Registro automático no sistema
-- Organização e visualização estruturada das finanças
+## Funcionalidades
 
----
-
-## 🛠 Tecnologias Utilizadas
-
-- HTML
-- CSS
-- JavaScript
-- APIs externas (integração WhatsApp / IA)
-- Banco de Dados (a definir: relacional ou não relacional)
-- Vercel (deploy da aplicação web)
-
----
-
-## 📂 Estrutura do Repositório
-
-- /docs → Documentações, planejamento e materiais acadêmicos
-- /src → Código-fonte da aplicação
-- /prototipo → Mockups e protótipos das interfaces
-- README.md → Documento principal do projeto
-
----
-
-## 📌 Escopo Inicial do Projeto
-
-### Funcionalidades previstas:
-
-- Cadastro e autenticação de usuário
+- Cadastro e login de usuários
+- Autenticação com JWT
+- Listagem de transações por usuário autenticado
 - Registro manual de receitas e despesas
-- Registro automático via WhatsApp
-- Processamento de:
-  - Texto
-  - Áudio
-  - Imagem (OCR para comprovantes)
-- Classificação automática das transações
-- Organização por categoria
-- Controle de contas a pagar
-- Visualização de relatórios e gráficos
+- Registro de transações com apoio de IA
+- Dashboard com saldo e gráfico por categoria
+- Bot do Telegram integrado à API
+- Banco de dados SQLite em desenvolvimento
 
-### Limitações do escopo:
+## Tecnologias
 
-- Não será realizado aconselhamento financeiro oficial.
-- As análises realizadas pela IA terão caráter informativo.
-- A integração dependerá de APIs disponíveis e viáveis para uso acadêmico.
+| Camada | Tecnologias |
+| --- | --- |
+| Frontend | HTML, CSS, JavaScript |
+| Backend | FastAPI, SQLAlchemy, Pydantic |
+| Autenticação | JWT, Passlib, Bcrypt |
+| IA | Groq |
+| Bot | python-telegram-bot |
+| Banco | SQLite |
 
----
+## Estrutura
 
-## 🌐 Deploy
+```text
+fincontrol-ia/
+├── app/
+│   ├── routers/
+│   ├── ai_parser.py
+│   ├── auth.py
+│   ├── database.py
+│   ├── main.py
+│   ├── models.py
+│   └── schemas.py
+├── legacy/
+│   └── fincontrol_backend/
+├── docs/
+├── prototipo/
+├── index.html
+├── script.js
+├── styles.css
+├── bot.py
+└── requirements.txt
+```
 
-A aplicação será disponibilizada publicamente através da plataforma Vercel.
+## Como Rodar
 
-Link do sistema (em desenvolvimento):
-🔗 
+Crie e ative o ambiente virtual:
 
----
+```powershell
+python -m venv venv
+.\venv\Scripts\activate
+```
 
-## 📅 Última atualização
+Instale as dependências:
 
-09 de março de 2026
+```powershell
+pip install -r requirements.txt
+```
 
----
+Configure o `.env`:
 
-## 📌 Status do Projeto
+```env
+DATABASE_URL=sqlite:///./fincontrol.db
+SECRET_KEY=sua-chave-secreta
+GROQ_API_KEY=sua-chave-groq
+GROQ_MODEL=llama-3.3-70b-versatile
+MAX_TOKENS=1500
+```
 
-🚧 Em fase inicial de estruturação e definição de arquitetura.
+Inicie a API:
 
-## 📂 Estrutura do Repositório
+```powershell
+uvicorn app.main:app --reload
+```
+
+Acesse a documentação:
+
+```text
+http://127.0.0.1:8000/docs
+```
+
+Para testar o frontend, abra o arquivo `index.html` no navegador.
+
+## Status
+
+Projeto em desenvolvimento.
+
+Próximas melhorias previstas:
+
+- Melhorar o formulário de cadastro de transações
+- Evoluir a confirmação de transações feitas por IA
+- Preparar deploy do backend e frontend
+- Documentar o fluxo do bot Telegram
+
+## Observação
+
+Este projeto não oferece consultoria financeira profissional. As respostas da IA são usadas apenas para auxiliar na organização financeira pessoal.

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FinPulse - AI Financial Dashboard</title>
+    <title>FinControl IA</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
@@ -98,24 +98,24 @@
             <div class="sidebar-top">
                 <div class="logo">
                     <i class="ph-fill ph-pulse"></i>
-                    <span>FinPulse</span>
+                    <span>FinControl IA</span>
                 </div>
                 <nav class="menu">
                     <a href="#" class="menu-item active" data-target="overview">
                         <i class="ph ph-squares-four"></i>
-                        <span>Overview</span>
+                        <span>Visão geral</span>
                     </a>
                     <a href="#" class="menu-item" data-target="transactions">
                         <i class="ph ph-arrows-left-right"></i>
-                        <span>Transactions</span>
+                        <span>Transações</span>
                     </a>
                     <a href="#" class="menu-item" data-target="goals">
                         <i class="ph ph-target"></i>
-                        <span>Goals</span>
+                        <span>Metas</span>
                     </a>
                     <a href="#" class="menu-item" data-target="investments">
                         <i class="ph ph-chart-line-up"></i>
-                        <span>Investments</span>
+                        <span>Investimentos</span>
                     </a>
                 </nav>
             </div>
@@ -149,7 +149,7 @@
             <header class="dashboard-header">
                 <div class="header-titles">
                     <h1>Dashboard</h1>
-                    <p>Welcome back, Alex. Your finances look solid.</p>
+                    <p>Bem-vindo. Suas finanças estão sob controle.</p>
                 </div>
                 <div class="header-actions">
                     <button class="icon-btn">
@@ -165,7 +165,7 @@
             <div class="dashboard-content">
                 <div class="balance-card">
                     <div class="balance-header">
-                        <h2>Total Balance</h2>
+                        <h2>Saldo total</h2>
                         <span class="trend positive">
                             <i class="ph ph-trend-up"></i> +2.4%
                         </span>
@@ -173,16 +173,16 @@
                     <div class="balance-amount">$42,850.20</div>
                     <div class="balance-actions">
                         <button class="btn btn-primary">
-                            <i class="ph ph-plus"></i> Add Money
+                            <i class="ph ph-plus"></i> Adicionar
                         </button>
                         <button class="btn btn-secondary">
-                            <i class="ph ph-paper-plane-tilt"></i> Send
+                            <i class="ph ph-paper-plane-tilt"></i> Enviar
                         </button>
                     </div>
                 </div>
 
                 <div class="spending-card">
-                    <h2>Spending Breakdown</h2>
+                    <h2>Despesas por categoria</h2>
                     <div class="spending-content">
                         <div class="chart-container">
                             <canvas id="spendingChart"></canvas>
@@ -207,7 +207,7 @@
                     </div>
                     <div class="ai-info">
                         <h2>FinAI Assistant</h2>
-                        <span class="ai-subtitle">Online â€¢ Personal Advisor</span>
+                        <span class="ai-subtitle">Online • Assistente financeiro</span>
                     </div>
                 </div>
                 <button class="icon-btn" style="border: none; background: transparent;">
@@ -218,21 +218,19 @@
             <div class="chat-area">
                 <div class="message ai-message">
                     <div class="bubble">
-                        Based on your recent spending, you're 15% above your Groceries budget. Shall we adjust your
-                        target for this month?
+                        Posso ajudar a registrar gastos, receitas e organizar suas transações por categoria.
                     </div>
                     <span class="time">10:42 AM</span>
                 </div>
                 <div class="message user-message">
                     <div class="bubble">
-                        Show me a projection if I cut back by $200.
+                        Registrei R$ 35 de mercado hoje.
                     </div>
                     <span class="time">10:45 AM</span>
                 </div>
                 <div class="message ai-message">
                     <div class="bubble">
-                        If you save an extra $200 this month and invest it in your <strong>Tech Index Fund</strong>, you
-                        could reach your goal 2 weeks earlier! ðŸš€
+                        Entendi. Posso classificar essa movimentação como Alimentação e atualizar seu resumo.
                     </div>
                     <span class="time">10:46 AM</span>
                 </div>
@@ -240,7 +238,7 @@
 
             <div class="chat-input-area">
                 <div class="input-wrapper">
-                    <input type="text" placeholder="Type your message...">
+                    <input type="text" placeholder="Digite uma mensagem...">
                     <button class="mic-btn"><i class="ph ph-microphone"></i></button>
                     <button class="send-btn"><i class="ph-fill ph-paper-plane-right"></i></button>
                 </div>
@@ -251,25 +249,25 @@
         <main class="dashboard view" id="transactions-dashboard">
             <header class="dashboard-header">
                 <div class="header-titles">
-                    <h1>Transactions</h1>
-                    <p>Track your recent financial activity.</p>
+                    <h1>Transações</h1>
+                    <p>Acompanhe suas movimentações recentes.</p>
                 </div>
                 <div class="header-actions">
                     <button class="btn btn-secondary" style="padding: 10px 16px; font-size: 14px;">
-                        <i class="ph ph-funnel"></i> Filter
+                        <i class="ph ph-funnel"></i> Filtrar
                     </button>
                     <button class="btn btn-secondary" style="padding: 10px 16px; font-size: 14px;">
-                        <i class="ph ph-download-simple"></i> Export
+                        <i class="ph ph-download-simple"></i> Exportar
                     </button>
                 </div>
             </header>
 
             <div class="dashboard-content transactions-content">
                 <div class="filter-tabs">
-                    <button class="tab-btn active">All</button>
-                    <button class="tab-btn">Income</button>
-                    <button class="tab-btn">Expenses</button>
-                    <button class="tab-btn">Transfers</button>
+                    <button class="tab-btn active">Todas</button>
+                    <button class="tab-btn">Receitas</button>
+                    <button class="tab-btn">Despesas</button>
+                    <button class="tab-btn">Transferências</button>
                 </div>
 
                 <div class="transactions-container">
@@ -285,7 +283,7 @@
                     </div>
                     <div class="ai-info">
                         <h2>FinAI Assistant</h2>
-                        <span class="ai-subtitle">Online â€¢ Personal Advisor</span>
+                        <span class="ai-subtitle">Online • Assistente financeiro</span>
                     </div>
                 </div>
                 <button class="icon-btn" style="border: none; background: transparent;">
@@ -299,19 +297,17 @@
                     <span class="time">2:14 PM</span>
                 </div>
                 <div class="message user-message">
-                    <div class="bubble">Yes, I bought a new MacBook for work. Can we categorize it as a business
-                        expense?</div>
+                    <div class="bubble">Sim, foi uma compra para trabalho. Pode ajustar a categoria?</div>
                     <span class="time">2:16 PM</span>
                 </div>
                 <div class="message ai-message">
-                    <div class="bubble">Done! I've updated the category to "Business Equipment". This will be reflected
-                        in your next tax report overview. ðŸ“Š</div>
+                    <div class="bubble">Claro. A transação foi atualizada e já aparece no resumo da categoria.</div>
                     <span class="time">2:16 PM</span>
                 </div>
             </div>
             <div class="chat-input-area">
                 <div class="input-wrapper">
-                    <input type="text" placeholder="Type your message...">
+                    <input type="text" placeholder="Digite uma mensagem...">
                     <button class="mic-btn"><i class="ph ph-microphone"></i></button>
                     <button class="send-btn"><i class="ph-fill ph-paper-plane-right"></i></button>
                 </div>
@@ -322,12 +318,12 @@
         <main class="dashboard view" id="goals-dashboard">
             <header class="dashboard-header">
                 <div class="header-titles">
-                    <h1>Financial Goals</h1>
-                    <p>Track your progress towards what matters.</p>
+                    <h1>Metas financeiras</h1>
+                    <p>Acompanhe seu progresso em objetivos importantes.</p>
                 </div>
                 <div class="header-actions">
                     <button class="btn btn-primary" style="padding: 10px 16px; font-size: 14px;">
-                        <i class="ph ph-plus"></i> New Goal
+                        <i class="ph ph-plus"></i> Nova meta
                     </button>
                 </div>
             </header>
@@ -339,7 +335,7 @@
                             <div class="tx-icon income"><i class="ph ph-house-line"></i></div>
                             <div>
                                 <h2>Dream House Down Payment</h2>
-                                <span class="goal-deadline">Due Dec 2026 â€¢ 24 months left</span>
+                                <span class="goal-deadline">Até dez/2026 • 24 meses restantes</span>
                             </div>
                         </div>
                         <button class="icon-btn" style="border: none; background: transparent;"><i
@@ -428,7 +424,7 @@
                     </div>
                     <div class="ai-info">
                         <h2>FinAI Assistant</h2>
-                        <span class="ai-subtitle">Online â€¢ Personal Advisor</span>
+                        <span class="ai-subtitle">Online • Assistente financeiro</span>
                     </div>
                 </div>
                 <button class="icon-btn" style="border: none; background: transparent;"><i
@@ -437,7 +433,7 @@
             <div class="chat-area">
                 <div class="message ai-message">
                     <div class="bubble">You're doing great with your House Down Payment! You've saved $1,500 this month.
-                        ðŸ¡</div>
+                        Você está avançando bem nessa meta.</div>
                     <span class="time">11:05 AM</span>
                 </div>
                 <div class="message user-message">
@@ -453,7 +449,7 @@
             </div>
             <div class="chat-input-area">
                 <div class="input-wrapper">
-                    <input type="text" placeholder="Type your message...">
+                    <input type="text" placeholder="Digite uma mensagem...">
                     <button class="mic-btn"><i class="ph ph-microphone"></i></button>
                     <button class="send-btn"><i class="ph-fill ph-paper-plane-right"></i></button>
                 </div>
@@ -612,7 +608,7 @@
                     </div>
                     <div class="ai-info">
                         <h2>FinAI Assistant</h2>
-                        <span class="ai-subtitle">Online â€¢ Wealth Advisor</span>
+                        <span class="ai-subtitle">Online • Assistente financeiro</span>
                     </div>
                 </div>
                 <button class="icon-btn" style="border: none; background: transparent;"><i
@@ -621,7 +617,7 @@
             <div class="chat-area">
                 <div class="message ai-message">
                     <div class="bubble">Your portfolio is up 7.1% overall! Based on your risk profile, you're currently
-                        heavily weighted in tech stocks (AAPL, TSLA). ðŸ“ˆ</div>
+                        concentrada em tecnologia. Vale acompanhar esse peso no seu planejamento.</div>
                     <span class="time">3:20 PM</span>
                 </div>
                 <div class="message user-message">
@@ -637,7 +633,7 @@
             </div>
             <div class="chat-input-area">
                 <div class="input-wrapper">
-                    <input type="text" placeholder="Type your message...">
+                    <input type="text" placeholder="Digite uma mensagem...">
                     <button class="mic-btn"><i class="ph ph-microphone"></i></button>
                     <button class="send-btn"><i class="ph-fill ph-paper-plane-right"></i></button>
                 </div>

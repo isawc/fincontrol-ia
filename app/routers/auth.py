@@ -1,10 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from sqlalchemy.orm import Session
 from pydantic import BaseModel, EmailStr
+from sqlalchemy.orm import Session
+
+from app import auth as auth_utils
 from app import models
 from app.database import get_db
-from app import auth as auth_utils
 
 router = APIRouter(prefix="/auth", tags=["Autenticação"])
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
@@ -39,24 +40,45 @@ def register(dados: RegisterRequest, db: Session = Depends(get_db)):
     db.refresh(usuario)
 
     token = auth_utils.criar_token({"sub": str(usuario.id)})
-    return {"access_token": token, "token_type": "bearer", "user_id": usuario.id, "name": usuario.name}
+    return {
+        "access_token": token,
+        "token_type": "bearer",
+        "user_id": usuario.id,
+        "name": usuario.name,
+    }
 
 
 @router.post("/login", response_model=TokenResponse)
-def login(form: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+def login(
+    form: OAuth2PasswordRequestForm = Depends(),
+    db: Session = Depends(get_db),
+):
     usuario = db.query(models.User).filter(models.User.email == form.username).first()
-    if not usuario or not auth_utils.verificar_senha(form.password, usuario.hashed_password):
+    if not usuario or not auth_utils.verificar_senha(
+        form.password,
+        usuario.hashed_password,
+    ):
         raise HTTPException(status_code=401, detail="Email ou senha incorretos")
 
     token = auth_utils.criar_token({"sub": str(usuario.id)})
-    return {"access_token": token, "token_type": "bearer", "user_id": usuario.id, "name": usuario.name}
+    return {
+        "access_token": token,
+        "token_type": "bearer",
+        "user_id": usuario.id,
+        "name": usuario.name,
+    }
 
 
-def get_usuario_atual(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+def get_usuario_atual(
+    token: str = Depends(oauth2_scheme),
+    db: Session = Depends(get_db),
+):
     payload = auth_utils.decodificar_token(token)
     if not payload:
         raise HTTPException(status_code=401, detail="Token inválido")
+
     usuario = db.query(models.User).filter(models.User.id == int(payload["sub"])).first()
     if not usuario:
         raise HTTPException(status_code=401, detail="Usuário não encontrado")
+
     return usuario
