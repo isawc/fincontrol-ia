@@ -23,7 +23,7 @@ A IA interpreta a mensagem, identifica valor, tipo, categoria e descrição, e r
 - Listagem de transações por usuário autenticado
 - Registro manual de receitas e despesas
 - Registro de transações com apoio de IA
-- Dashboard com saldo e gráfico por categoria
+- Dashboard com saldo, gráfico por categoria e últimas movimentações
 - Bot do Telegram integrado à API
 - Banco de dados SQLite em desenvolvimento
 
@@ -99,6 +99,16 @@ http://127.0.0.1:8000/docs
 ```
 
 Para testar o frontend, abra o arquivo `index.html` no navegador.
+
+## Desafios e Aprendizados
+
+Durante o desenvolvimento, uma das primeiras melhorias foi trocar o uso de `user_id` enviado pelo frontend por autenticação com JWT. No início, as rotas recebiam o ID do usuário pela URL, mas isso deixava o fluxo frágil. A solução foi proteger as rotas financeiras e fazer o backend identificar o usuário pelo token enviado no header `Authorization`.
+
+Também precisei lidar com um problema de compatibilidade no `bcrypt` durante o cadastro de usuários. A correção foi fixar uma versão estável no `requirements.txt`, garantindo que o hash de senha funcionasse corretamente no ambiente local.
+
+Outro ponto importante foi conectar o dashboard a dados reais. A primeira versão tinha valores fixos na tela; depois o saldo, o gráfico por categoria e a lista de últimas transações passaram a ser calculados a partir da API.
+
+Além disso, alguns arquivos apresentaram problema de encoding em textos com acentos. Corrigir isso foi importante para deixar o Swagger, o README e a interface mais profissionais.
 
 ## Status
 
