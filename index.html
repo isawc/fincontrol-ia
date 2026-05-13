@@ -13,51 +13,84 @@
 
 <body>
 
-    <div class="auth-overlay" id="authOverlay">
-        <div class="auth-box">
-         <div class="auth-logo">
-            <i class="ph-fill ph-pulse"></i>
-            <span>FinControl IA</span>
-            </div>
-        <p class="auth-subtitle">Controle financeiro inteligente com IA</p>
-        </div>
+        <div class="auth-overlay" id="authOverlay">
+        <div class="auth-bg-grid"></div>
+        <div class="auth-shape auth-shape-one"></div>
+        <div class="auth-shape auth-shape-two"></div>
 
-        <div class="auth-tabs">
-            <button class="auth-tab active" id="tabLogin">Login</button>
-            <button class="auth-tab" id="tabRegister">Cadastro</button>
-        </div>
+        <section class="auth-shell">
+            <div class="auth-visual">
+                <div class="auth-logo-mark">
+                    <i class="ph-fill ph-pulse"></i>
+                </div>
+                <span class="auth-kicker">FinControl IA</span>
+                <h1>Controle seus gastos com menos atrito.</h1>
+                <p>Registre despesas, acompanhe o saldo e use IA para transformar mensagens em transações.</p>
 
-        <div id="formLogin">
-            <div class="auth-field">
-                <label>Email</label>
-                <input type="email" id="loginEmail" placeholder="seu@email.com">
+                <div class="auth-preview-card">
+                    <div class="preview-header">
+                        <span>Resumo mensal</span>
+                        <strong>R$ 3.248,90</strong>
+                    </div>
+                    <div class="preview-chart" aria-hidden="true">
+                        <span style="height: 42%"></span>
+                        <span style="height: 68%"></span>
+                        <span style="height: 36%"></span>
+                        <span style="height: 82%"></span>
+                        <span style="height: 56%"></span>
+                        <span style="height: 74%"></span>
+                    </div>
+                    <div class="preview-row">
+                        <span>IA classificou</span>
+                        <strong>12 transações</strong>
+                    </div>
+                </div>
             </div>
-            <div class="auth-field">
-                <label>Senha</label>
-                <input type="password" id="loginPassword" placeholder="••••••••">
-            </div>
-            <button class="btn btn-primary" style="width:100%; margin-top:8px;" id="btnLogin">Entrar</button>
-        </div>
 
-        <div id="formRegister" style="display:none;">
-            <div class="auth-field">
-                <label>Nome</label>
-                <input type="text" id="registerName" placeholder="Seu nome">
-            </div>
-            <div class="auth-field">
-                <label>Email</label>
-                <input type="email" id="registerEmail" placeholder="seu@email.com">
-            </div>
-            <div class="auth-field">
-                <label>Senha</label>
-                <input type="password" id="registerPassword" placeholder="••••••••">
-            </div>
-            <button class="btn btn-primary" style="width:100%; margin-top:8px;" id="btnRegister">Criar conta</button>
-        </div>
+            <div class="auth-box">
+                <div class="auth-logo">
+                    <i class="ph-fill ph-pulse"></i>
+                    <span>FinControl IA</span>
+                </div>
+                <p class="auth-subtitle">Acesse sua área financeira</p>
 
-        <p id="authError" style="color:#FF4C4C; font-size:13px; margin-top:8px; display:none;"></p>
+                <div class="auth-tabs">
+                    <button class="auth-tab active" id="tabLogin">Login</button>
+                    <button class="auth-tab" id="tabRegister">Cadastro</button>
+                </div>
+
+                <div id="formLogin">
+                    <div class="auth-field">
+                        <label>Email</label>
+                        <input type="email" id="loginEmail" placeholder="seu@email.com">
+                    </div>
+                    <div class="auth-field">
+                        <label>Senha</label>
+                        <input type="password" id="loginPassword" placeholder="Sua senha">
+                    </div>
+                    <button class="btn btn-primary auth-submit" id="btnLogin">Entrar</button>
+                </div>
+
+                <div id="formRegister" style="display:none;">
+                    <div class="auth-field">
+                        <label>Nome</label>
+                        <input type="text" id="registerName" placeholder="Seu nome">
+                    </div>
+                    <div class="auth-field">
+                        <label>Email</label>
+                        <input type="email" id="registerEmail" placeholder="seu@email.com">
+                    </div>
+                    <div class="auth-field">
+                        <label>Senha</label>
+                        <input type="password" id="registerPassword" placeholder="Crie uma senha">
+                    </div>
+                    <button class="btn btn-primary auth-submit" id="btnRegister">Criar conta</button>
+                </div>
+
+                <p id="authError" class="auth-error"></p>
+            </div>
+        </section>
     </div>
-</div>
 
     <div class="app-container">
         <!-- Left Sidebar (Persistent) -->
@@ -174,7 +207,7 @@
                     </div>
                     <div class="ai-info">
                         <h2>FinAI Assistant</h2>
-                        <span class="ai-subtitle">Online • Personal Advisor</span>
+                        <span class="ai-subtitle">Online â€¢ Personal Advisor</span>
                     </div>
                 </div>
                 <button class="icon-btn" style="border: none; background: transparent;">
@@ -199,7 +232,7 @@
                 <div class="message ai-message">
                     <div class="bubble">
                         If you save an extra $200 this month and invest it in your <strong>Tech Index Fund</strong>, you
-                        could reach your goal 2 weeks earlier! 🚀
+                        could reach your goal 2 weeks earlier! ðŸš€
                     </div>
                     <span class="time">10:46 AM</span>
                 </div>
@@ -252,7 +285,7 @@
                     </div>
                     <div class="ai-info">
                         <h2>FinAI Assistant</h2>
-                        <span class="ai-subtitle">Online • Personal Advisor</span>
+                        <span class="ai-subtitle">Online â€¢ Personal Advisor</span>
                     </div>
                 </div>
                 <button class="icon-btn" style="border: none; background: transparent;">
@@ -272,7 +305,7 @@
                 </div>
                 <div class="message ai-message">
                     <div class="bubble">Done! I've updated the category to "Business Equipment". This will be reflected
-                        in your next tax report overview. 📊</div>
+                        in your next tax report overview. ðŸ“Š</div>
                     <span class="time">2:16 PM</span>
                 </div>
             </div>
@@ -306,7 +339,7 @@
                             <div class="tx-icon income"><i class="ph ph-house-line"></i></div>
                             <div>
                                 <h2>Dream House Down Payment</h2>
-                                <span class="goal-deadline">Due Dec 2026 • 24 months left</span>
+                                <span class="goal-deadline">Due Dec 2026 â€¢ 24 months left</span>
                             </div>
                         </div>
                         <button class="icon-btn" style="border: none; background: transparent;"><i
@@ -395,7 +428,7 @@
                     </div>
                     <div class="ai-info">
                         <h2>FinAI Assistant</h2>
-                        <span class="ai-subtitle">Online • Personal Advisor</span>
+                        <span class="ai-subtitle">Online â€¢ Personal Advisor</span>
                     </div>
                 </div>
                 <button class="icon-btn" style="border: none; background: transparent;"><i
@@ -404,7 +437,7 @@
             <div class="chat-area">
                 <div class="message ai-message">
                     <div class="bubble">You're doing great with your House Down Payment! You've saved $1,500 this month.
-                        🏡</div>
+                        ðŸ¡</div>
                     <span class="time">11:05 AM</span>
                 </div>
                 <div class="message user-message">
@@ -579,7 +612,7 @@
                     </div>
                     <div class="ai-info">
                         <h2>FinAI Assistant</h2>
-                        <span class="ai-subtitle">Online • Wealth Advisor</span>
+                        <span class="ai-subtitle">Online â€¢ Wealth Advisor</span>
                     </div>
                 </div>
                 <button class="icon-btn" style="border: none; background: transparent;"><i
@@ -588,7 +621,7 @@
             <div class="chat-area">
                 <div class="message ai-message">
                     <div class="bubble">Your portfolio is up 7.1% overall! Based on your risk profile, you're currently
-                        heavily weighted in tech stocks (AAPL, TSLA). 📈</div>
+                        heavily weighted in tech stocks (AAPL, TSLA). ðŸ“ˆ</div>
                     <span class="time">3:20 PM</span>
                 </div>
                 <div class="message user-message">
