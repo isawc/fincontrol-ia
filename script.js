@@ -160,12 +160,77 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             
                 updateChart(categories);
+
+                const legend = document.getElementById('spending-legend');
+                if (legend) {
+                    const total = Object.values(categories).reduce((a, b) => a + b, 0);
+                    const colors = ['#00E57A', '#008F4C', '#244231', '#1A2A20', '#4CAF50'];
+                    legend.innerHTML = Object.entries(categories).map(([cat, val], i) => `
+                        <div class="legend-item">
+                            <div class="legend-color" style="background-color: ${colors[i % colors.length]};"></div>
+                            <div class="legend-info">
+                                <span class="legend-label">${cat}</span>
+                                <span class="legend-value">${total > 0 ? Math.round((val / total) * 100) : 0}%</span>
+                            </div>
+                        </div>
+                    `).join('');
+                }
             }
         } catch (error) {
             console.error("Error fetching overview:", error);
             if (!silent) showToast("Failed to connect to backend", "error");
         }
     };
+
+        // Busca e renderiza transações reais na aba Transactions
+    const fetchTransactions = async () => {
+        try {
+            const res = await fetch(`${API_URL}/transactions/?user_id=1`);
+            if (!res.ok) return;
+            const transactions = await res.json();
+
+            const container = document.querySelector('#transactions-dashboard .transactions-container');
+            if (!container) return;
+
+            if (transactions.length === 0) {
+                container.innerHTML = '<p style="color: var(--text-muted); padding: 20px;">Nenhuma transação encontrada.</p>';
+                return;
+            }
+
+            container.innerHTML = transactions.map(tx => {
+                const date = new Date(tx.date).toLocaleDateString('pt-BR');
+                const isIncome = tx.type === 'income';
+                const icon = isIncome ? 'ph-arrow-circle-up' : 'ph-arrow-circle-down';
+                const colorClass = isIncome ? 'income' : 'expense';
+                const signal = isIncome ? '+' : '-';
+
+                return `
+                    <div class="transaction-item">
+                        <div class="tx-icon ${colorClass}">
+                            <i class="ph ${icon}"></i>
+                        </div>
+                        <div class="tx-info">
+                            <h4>${tx.description || tx.category}</h4>
+                            <span>${tx.category} • ${date}</span>
+                        </div>
+                        <div class="tx-amount ${isIncome ? 'positive' : 'negative'}">
+                            ${signal}R$${tx.amount.toFixed(2)}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+        } catch (error) {
+            console.error('Erro ao buscar transações:', error);
+        }
+    };
+
+    // Load initial data
+    fetchTransactions();
+    fetchOverview();
+
+    // Expõe fetchOverview globalmente para poder ser chamada de qualquer lugar
+    window.fetchOverview = fetchOverview;
 
     // Load initial data
     fetchOverview();
