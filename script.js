@@ -129,28 +129,37 @@ document.addEventListener('DOMContentLoaded', () => {
     // ==========================================
     // BACKEND INTEGRATION (API CALLS)
     // ==========================================
-    const API_URL = "http://localhost:5000/api";
+    const API_URL = "http://localhost:8000";
 
     const fetchOverview = async () => {
         try {
-            const res = await fetch(`${API_URL}/overview`);
+            const res = await fetch(`${API_URL}/transactions/?user_id=1`);
             if (res.ok) {
-                const data = await res.json();
+                const transactions = await res.json();
 
-                // Update Balance
+                const balance = transactions.reduce((acc, tx) => {
+                    return tx.type === 'income' ? acc + tx.amount : acc - tx.amount;
+                }, 0);
+
                 const balanceEl = document.querySelector('.balance-amount');
                 if (balanceEl) {
-                    balanceEl.textContent = `$${data.user.balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                    balanceEl.textContent = `R$${balance.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
                 }
 
-                // Update Spending text
+                const categories = {};
+                transactions.forEach(tx => {
+                    if (tx.type === 'expense') {
+                        categories[tx.category] = (categories[tx.category] || 0) + tx.amount;
+                    }
+                });
+
+                const totalSpent = Object.values(categories).reduce((a, b) => a + b, 0);
                 const totalSpentEl = document.querySelector('.chart-center h3');
                 if (totalSpentEl) {
-                    totalSpentEl.textContent = `$${data.spending.total.toLocaleString('en-US')}`;
+                    totalSpentEl.textContent = `R$${totalSpent.toLocaleString('pt-BR')}`;
                 }
-
-                // Update chart if data exists
-                updateChart(data.spending.categories);
+            
+                updateChart(categories);
             }
         } catch (error) {
             console.error("Error fetching overview:", error);
@@ -355,10 +364,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
             try {
                 // Call real AI backend
-                const res = await fetch("http://localhost:5000/api/chat", {
+                const res = await fetch(`${API_URL}/ai/parse`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: text })
+                    body: JSON.stringify({ message: text, user_id: 1 })
                 });
 
                 typingMsg.remove(); // Remove thinking message
@@ -375,9 +384,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     chatArea.insertAdjacentHTML('beforeend', aiHtml);
 
                     if (data.action_taken) {
-                        // Refresh Data globally!
                         fetchOverview();
-                        showToast('Database automatically updated by AI!', 'success');
+                        showToast('Transação registrada com sucesso! 💰', 'success');
                     }
                 } else {
                     throw new Error("Server error");
