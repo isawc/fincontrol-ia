@@ -197,6 +197,52 @@ document.addEventListener('DOMContentLoaded', () => {
                 container.innerHTML = '<p style="color: var(--text-muted); padding: 20px;">Nenhuma transação encontrada.</p>';
                 return;
             }
+    
+    setupTransactionFilters();
+
+    const setupTransactionFilters = () => {
+        const tabs = document.querySelectorAll('#transactions-dashboard .tab-btn');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', async () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+
+                const filter = tab.textContent.trim().toLowerCase();
+                const res = await fetch(`${API_URL}/transactions/?user_id=1`);
+                if (!res.ok) return;
+                const all = await res.json();
+
+                const filtered = filter === 'all' ? all
+                    : filter === 'income' ? all.filter(tx => tx.type === 'income')
+                    : filter === 'expenses' ? all.filter(tx => tx.type === 'expense')
+                    : all;
+
+                const container = document.querySelector('#transactions-dashboard .transactions-container');
+                if (!container) return;
+
+                container.innerHTML = filtered.length === 0
+                    ? '<p style="color: var(--text-muted); padding: 20px;">Nenhuma transação encontrada.</p>'
+                    : filtered.map(tx => {
+                        const date = new Date(tx.date).toLocaleDateString('pt-BR');
+                        const isIncome = tx.type === 'income';
+                        return `
+                            <div class="transaction-item">
+                                <div class="tx-icon ${isIncome ? 'income' : 'expense'}">
+                                    <i class="ph ${isIncome ? 'ph-arrow-circle-up' : 'ph-arrow-circle-down'}"></i>
+                                </div>
+                                <div class="tx-info">
+                                    <h4>${tx.description || tx.category}</h4>
+                                    <span>${tx.category} • ${date}</span>
+                                </div>
+                                <div class="tx-amount ${isIncome ? 'positive' : 'negative'}">
+                                    ${isIncome ? '+' : '-'}R$${tx.amount.toFixed(2)}
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+            });
+        });
+    };
 
             container.innerHTML = transactions.map(tx => {
                 const date = new Date(tx.date).toLocaleDateString('pt-BR');
