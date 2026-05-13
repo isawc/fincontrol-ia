@@ -45,6 +45,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const getTransactionIcon = (type) => {
         return type === 'income' ? 'ph-arrow-circle-up' : 'ph-arrow-circle-down';
     };
+
+    const setButtonLoading = (button, loadingText) => {
+        button.dataset.originalText = button.innerHTML;
+        button.innerHTML = `<i class="ph ph-spinner ph-spin"></i> ${loadingText}`;
+        button.disabled = true;
+        button.classList.add('is-loading');
+    };
+
+    const resetButtonLoading = (button) => {
+        button.innerHTML = button.dataset.originalText || button.innerHTML;
+        button.disabled = false;
+        button.classList.remove('is-loading');
+    };
     const showAuthError = (msg) => {
         authError.textContent = msg;
         authError.style.display = 'block';
@@ -82,6 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     document.getElementById('btnLogin').addEventListener('click', async () => {
+        const button = document.getElementById('btnLogin');
         const email = document.getElementById('loginEmail').value;
         const password = document.getElementById('loginPassword').value;
         if (!email || !password) return showAuthError('Preencha todos os campos');
@@ -91,22 +105,29 @@ document.addEventListener('DOMContentLoaded', () => {
         form.append('password', password);
 
         try {
+            authError.style.display = 'none';
+            setButtonLoading(button, 'Entrando...');
             const res = await fetch(`${API_URL}/auth/login`, { method: 'POST', body: form });
             const data = await res.json();
             if (!res.ok) return showAuthError(data.detail || 'Erro ao fazer login');
             hideAuth(data.access_token, data.user_id, data.name);
         } catch {
-            showAuthError('Erro de conexão com o servidor');
+            showAuthError('Erro de conex?o com o servidor');
+        } finally {
+            resetButtonLoading(button);
         }
     });
 
     document.getElementById('btnRegister').addEventListener('click', async () => {
+        const button = document.getElementById('btnRegister');
         const name = document.getElementById('registerName').value;
         const email = document.getElementById('registerEmail').value;
         const password = document.getElementById('registerPassword').value;
         if (!name || !email || !password) return showAuthError('Preencha todos os campos');
 
         try {
+            authError.style.display = 'none';
+            setButtonLoading(button, 'Criando conta...');
             const res = await fetch(`${API_URL}/auth/register`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -116,7 +137,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!res.ok) return showAuthError(data.detail || 'Erro ao cadastrar');
             hideAuth(data.access_token, data.user_id, data.name);
         } catch {
-            showAuthError('Erro de conexão com o servidor');
+            showAuthError('Erro de conex?o com o servidor');
+        } finally {
+            resetButtonLoading(button);
         }
     });
 
