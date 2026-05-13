@@ -166,11 +166,11 @@
                 <div class="balance-card">
                     <div class="balance-header">
                         <h2>Saldo total</h2>
-                        <span class="trend positive">
-                            <i class="ph ph-trend-up"></i> +2.4%
+                        <span class="trend positive" id="transaction-count-badge">
+                            <i class="ph ph-wallet"></i> 0 transações
                         </span>
                     </div>
-                    <div class="balance-amount">$42,850.20</div>
+                    <div class="balance-amount">R$0,00</div>
                     <div class="balance-actions">
                         <button class="btn btn-primary">
                             <i class="ph ph-plus"></i> Adicionar
@@ -188,14 +188,25 @@
                             <canvas id="spendingChart"></canvas>
                             <div class="chart-center">
                                 <span>Total</span>
-                                <h3>$1,240</h3>
+                                <h3>R$0,00</h3>
                             </div>
                         </div>
                         <div class="spending-legend" id="spending-legend">
+                            <p class="empty-state">Nenhuma despesa registrada ainda.</p>
                         </div>
                     </div>
                 </div>
             </div>
+
+            <section class="overview-transactions-card">
+                <div class="section-header">
+                    <h2>Últimas transações</h2>
+                    <button class="tab-btn" id="btnViewTransactions">Ver todas</button>
+                </div>
+                <div class="overview-transactions-list" id="overview-transactions">
+                    <p class="empty-state">Nenhuma transação registrada ainda.</p>
+                </div>
+            </section>
         </main>
 
         <aside class="ai-panel view active" id="overview-ai">
@@ -645,43 +656,43 @@
     <div class="modal-overlay" id="addMoneyModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>Add Money</h2>
+                <h2>Adicionar receita</h2>
                 <button class="close-modal-btn" id="closeAddMoneyBtn"><i class="ph ph-x"></i></button>
             </div>
             <div class="modal-body">
-                <p class="modal-subtitle">Transfer funds from your linked accounts.</p>
+                <p class="modal-subtitle">Registre uma nova entrada no seu saldo.</p>
 
                 <div class="form-group amount-group">
-                    <label>Amount</label>
+                    <label>Valor</label>
                     <div class="amount-input-wrapper">
-                        <span class="currency-symbol">$</span>
+                        <span class="currency-symbol">R$</span>
                         <input type="number" placeholder="0.00" min="1" step="0.01" id="addMoneyAmount">
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label>From</label>
+                    <label>Origem</label>
                     <div class="select-wrapper">
                         <select>
-                            <option value="bank1">Chase Checking (**** 1234)</option>
-                            <option value="bank2">Bank of America (**** 5678)</option>
-                            <option value="card">Visa Debit (**** 9012)</option>
+                            <option value="Salário">Salário</option>
+                            <option value="Freelance">Freelance</option>
+                            <option value="Outros">Outros</option>
                         </select>
                         <i class="ph ph-caret-down select-icon"></i>
                     </div>
                 </div>
 
                 <div class="quick-amounts">
-                    <button class="quick-btn">$50</button>
-                    <button class="quick-btn">$100</button>
-                    <button class="quick-btn">$500</button>
-                    <button class="quick-btn">$1k</button>
+                    <button class="quick-btn">R$50</button>
+                    <button class="quick-btn">R$100</button>
+                    <button class="quick-btn">R$500</button>
+                    <button class="quick-btn">R$1000</button>
                 </div>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary cancel-modal-btn" id="cancelAddMoneyBtn"
-                    style="width: auto; padding: 12px 24px;">Cancel</button>
-                <button class="btn btn-primary" style="flex: 1;" id="confirmAddMoneyBtn">Confirm Transfer</button>
+                    style="width: auto; padding: 12px 24px;">Cancelar</button>
+                <button class="btn btn-primary" style="flex: 1;" id="confirmAddMoneyBtn">Salvar receita</button>
             </div>
         </div>
     </div>

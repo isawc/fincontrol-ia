@@ -34,6 +34,17 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.removeItem('user_name');
         authOverlay.classList.remove('hidden');
     };
+
+    const formatCurrency = (value) => {
+        return `R$${Number(value).toLocaleString('pt-BR', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        })}`;
+    };
+
+    const getTransactionIcon = (type) => {
+        return type === 'income' ? 'ph-arrow-circle-up' : 'ph-arrow-circle-down';
+    };
     const showAuthError = (msg) => {
         authError.textContent = msg;
         authError.style.display = 'block';
@@ -146,6 +157,13 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    const btnViewTransactions = document.getElementById('btnViewTransactions');
+    if (btnViewTransactions) {
+        btnViewTransactions.addEventListener('click', () => {
+            document.querySelector('.menu-item[data-target="transactions"]')?.click();
+        });
+    }
+
     // ==========================================
     // MODALS LOGIC
     // ==========================================
@@ -198,7 +216,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 btn.classList.add('active');
 
                 // Parse value and set to input
-                let val = btn.textContent.replace('$', '').replace('k', '000');
+                let val = btn.textContent.replace('R$', '').replace('$', '').replace('k', '000');
                 addMoneyAmountInput.value = val;
             });
         });
@@ -206,38 +224,57 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Confirm button logic
     if (confirmAddMoneyBtn) {
-        confirmAddMoneyBtn.addEventListener('click', () => {
-            const amount = addMoneyAmountInput.value;
+        confirmAddMoneyBtn.addEventListener('click', async () => {
+            const amount = Number(addMoneyAmountInput.value);
             if (!amount || amount <= 0) {
                 alert('Informe um valor válido.');
                 return;
             }
 
-            // In a real app, send to backend here
             const originalText = confirmAddMoneyBtn.innerHTML;
-                confirmAddMoneyBtn.innerHTML = '<i class="ph ph-spinner ph-spin"></i> Processando...';
+            confirmAddMoneyBtn.innerHTML = '<i class="ph ph-spinner ph-spin"></i> Processando...';
             confirmAddMoneyBtn.style.opacity = '0.8';
             confirmAddMoneyBtn.style.pointerEvents = 'none';
 
-            setTimeout(() => {
+            try {
+                const category = addMoneyModal.querySelector('select')?.value || 'Outros';
+                const res = await authFetch(`${API_URL}/transactions/`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        amount,
+                        type: 'income',
+                        category,
+                        description: `Receita: ${category}`
+                    })
+                });
+
+                if (!res.ok) {
+                    throw new Error('Erro ao salvar receita');
+                }
+
                 confirmAddMoneyBtn.innerHTML = '<i class="ph ph-check-circle"></i> Concluído';
                 confirmAddMoneyBtn.style.backgroundColor = '#008F4C';
                 confirmAddMoneyBtn.style.color = '#FFF';
+                showToast('Receita registrada com sucesso.', 'success');
+                fetchOverview(true);
 
                 setTimeout(() => {
                     closeAddMoneyModal();
-                    // Reset button state
                     setTimeout(() => {
                         confirmAddMoneyBtn.innerHTML = originalText;
                         confirmAddMoneyBtn.style.backgroundColor = '';
                         confirmAddMoneyBtn.style.color = '';
                         confirmAddMoneyBtn.style.opacity = '1';
                         confirmAddMoneyBtn.style.pointerEvents = 'auto';
-
-                        // Optional: update balance here in a real app
                     }, 300);
                 }, 1000);
-            }, 1000);
+            } catch (error) {
+                showToast('Não foi possível salvar a receita.', 'error');
+                confirmAddMoneyBtn.innerHTML = originalText;
+                confirmAddMoneyBtn.style.opacity = '1';
+                confirmAddMoneyBtn.style.pointerEvents = 'auto';
+            }
         });
     }
 
@@ -257,7 +294,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const balanceEl = document.querySelector('.balance-amount');
                 if (balanceEl) {
-                    balanceEl.textContent = `R$${balance.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
+                    balanceEl.textContent = formatCurrency(balance);
+                }
+
+                const countBadge = document.getElementById('transaction-count-badge');
+                if (countBadge) {
+                    countBadge.innerHTML = `<i class="ph ph-wallet"></i> ${transactions.length} transações`;
                 }
 
                 const categories = {};
@@ -270,17 +312,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 const totalSpent = Object.values(categories).reduce((a, b) => a + b, 0);
                 const totalSpentEl = document.querySelector('.chart-center h3');
                 if (totalSpentEl) {
-                    totalSpentEl.textContent = `R$${totalSpent.toLocaleString('pt-BR')}`;
+                    totalSpentEl.textContent = formatCurrency(totalSpent);
                 }
             
                 updateChart(categories);
+                renderOverviewTransactions(transactions.slice(0, 4));
                 fetchUser();
 
                 const legend = document.getElementById('spending-legend');
                 if (legend) {
                     const total = Object.values(categories).reduce((a, b) => a + b, 0);
                     const colors = ['#00E57A', '#008F4C', '#244231', '#1A2A20', '#4CAF50'];
-                    legend.innerHTML = Object.entries(categories).map(([cat, val], i) => `
+                    const entries = Object.entries(categories);
+                    legend.innerHTML = entries.length === 0
+                        ? '<p class="empty-state">Nenhuma despesa registrada ainda.</p>'
+                        : entries.map(([cat, val], i) => `
                         <div class="legend-item">
                             <div class="legend-color" style="background-color: ${colors[i % colors.length]};"></div>
                             <div class="legend-info">
@@ -320,14 +366,41 @@ document.addEventListener('DOMContentLoaded', () => {
                 return `
                     <div class="transaction-item">
                         <div class="tx-icon ${isIncome ? 'income' : 'expense'}">
-                            <i class="ph ${isIncome ? 'ph-arrow-circle-up' : 'ph-arrow-circle-down'}"></i>
+                            <i class="ph ${getTransactionIcon(tx.type)}"></i>
                         </div>
                         <div class="tx-info">
                             <h4>${tx.description || tx.category}</h4>
                             <span>${tx.category} • ${date}</span>
                         </div>
                         <div class="tx-amount ${isIncome ? 'positive' : 'negative'}">
-                            ${isIncome ? '+' : '-'}R$${tx.amount.toFixed(2)}
+                            ${isIncome ? '+' : '-'}${formatCurrency(tx.amount)}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+    };
+
+    const renderOverviewTransactions = (transactions) => {
+        const container = document.getElementById('overview-transactions');
+        if (!container) return;
+
+        container.innerHTML = transactions.length === 0
+            ? '<p class="empty-state">Nenhuma transação registrada ainda.</p>'
+            : transactions.map(tx => {
+                const date = new Date(tx.date).toLocaleDateString('pt-BR');
+                const isIncome = tx.type === 'income';
+
+                return `
+                    <div class="transaction-item">
+                        <div class="tx-icon ${isIncome ? 'income' : 'expense'}">
+                            <i class="ph ${getTransactionIcon(tx.type)}"></i>
+                        </div>
+                        <div class="tx-info">
+                            <h4>${tx.description || tx.category}</h4>
+                            <span>${tx.category} • ${date}</span>
+                        </div>
+                        <div class="tx-amount ${isIncome ? 'positive' : 'negative'}">
+                            ${isIncome ? '+' : '-'}${formatCurrency(tx.amount)}
                         </div>
                     </div>
                 `;
@@ -396,7 +469,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // If no expenses, fallback to empty chart
         if (values.length === 0) {
-            labels.push("No Expenses Yet");
+            labels.push("Sem despesas");
             values.push(1);
         }
 

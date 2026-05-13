@@ -492,6 +492,40 @@ body {
     color: var(--text-muted);
 }
 
+.overview-transactions-card {
+    margin-top: 24px;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 28px 32px;
+}
+
+.overview-transactions-card .section-header {
+    margin-bottom: 20px;
+}
+
+.overview-transactions-card h2 {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.overview-transactions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.overview-transactions-list .transaction-item {
+    padding: 14px 18px;
+    border-radius: var(--radius-sm);
+}
+
+.empty-state {
+    color: var(--text-muted);
+    font-size: 14px;
+    line-height: 1.6;
+}
+
 /* ================== RIGHT AI PANEL ================== */
 .ai-panel {
     width: var(--ai-panel-width);
