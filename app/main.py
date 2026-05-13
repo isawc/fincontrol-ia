@@ -1,10 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.database import engine, Base
-from app.routers import transactions, ai
 from app.routers import transactions, ai, users
 
-app.include_router(users.router)
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
@@ -13,7 +11,6 @@ app = FastAPI(
     version="1.0.0",
 )
 
-# Permite que o frontend se comunique com o backend
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -24,6 +21,7 @@ app.add_middleware(
 
 app.include_router(transactions.router)
 app.include_router(ai.router)
+app.include_router(users.router)
 
 
 @app.get("/")
