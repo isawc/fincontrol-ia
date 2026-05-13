@@ -160,6 +160,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             
                 updateChart(categories);
+                fetchUser();
 
                 const legend = document.getElementById('spending-legend');
                 if (legend) {
@@ -228,6 +229,26 @@ document.addEventListener('DOMContentLoaded', () => {
     // Load initial data
     fetchTransactions();
     fetchOverview();
+
+    const fetchUser = async () => {
+        try {
+            const res = await fetch(`${API_URL}/transactions/?user_id=1`);
+            if (!res.ok) return;
+
+            const userRes = await fetch(`${API_URL}/users/1`);
+            if (!userRes.ok) return;
+            const user = await userRes.json();
+
+            const nameEl = document.querySelector('.user-name');
+            if (nameEl) nameEl.textContent = user.name;
+
+            const headerEl = document.querySelector('.header-titles p');
+            if (headerEl) headerEl.textContent = `Bem-vindo, ${user.name}. Suas finanças estão sob controle.`;
+
+        } catch (error) {
+            console.error('Erro ao buscar usuário:', error);
+        }
+    };
 
     // Expõe fetchOverview globalmente para poder ser chamada de qualquer lugar
     window.fetchOverview = fetchOverview;

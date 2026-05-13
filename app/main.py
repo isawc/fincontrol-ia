@@ -2,7 +2,9 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.database import engine, Base
 from app.routers import transactions, ai
+from app.routers import transactions, ai, users
 
+app.include_router(users.router)
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
