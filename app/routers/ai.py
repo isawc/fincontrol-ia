@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 from app import models, schemas
 from app.ai_parser import parsear_mensagem
 from app.database import get_db
+from app.routers.auth import get_usuario_atual
 
 router = APIRouter(prefix="/ai", tags=["IA"])
 
@@ -20,16 +21,8 @@ TIPOS_VALIDOS = {"income", "expense"}
 def parsear_e_registrar(
     requisicao: schemas.AIParseRequest,
     db: Session = Depends(get_db),
+    usuario: models.User = Depends(get_usuario_atual),
 ):
-    usuario = (
-        db.query(models.User)
-        .filter(models.User.id == requisicao.user_id)
-        .first()
-    )
-
-    if not usuario:
-        raise HTTPException(status_code=404, detail="Usuário não encontrado")
-
     try:
         resultado = parsear_mensagem(requisicao.message)
     except ValueError as erro:

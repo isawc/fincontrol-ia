@@ -13,12 +13,34 @@ document.addEventListener('DOMContentLoaded', () => {
     const formRegister = document.getElementById('formRegister');
     const authError = document.getElementById('authError');
 
+    const getToken = () => localStorage.getItem('access_token');
+
+    const authHeaders = () => ({
+        'Authorization': `Bearer ${getToken()}`
+    });
+
+    const authFetch = (url, options = {}) => {
+        const headers = {
+            ...(options.headers || {}),
+            ...authHeaders()
+        };
+
+        return fetch(url, { ...options, headers });
+    };
+
+    const logout = () => {
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('user_id');
+        localStorage.removeItem('user_name');
+        authOverlay.classList.remove('hidden');
+    };
     const showAuthError = (msg) => {
         authError.textContent = msg;
         authError.style.display = 'block';
     };
 
-    const hideAuth = (userId, name) => {
+    const hideAuth = (token, userId, name) => {
+        localStorage.setItem('access_token', token);
         localStorage.setItem('user_id', userId);
         localStorage.setItem('user_name', name);
         authOverlay.classList.add('hidden');
@@ -27,8 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const checkAuth = () => {
-        const userId = localStorage.getItem('user_id');
-        if (userId) {
+        if (getToken()) {
             authOverlay.classList.add('hidden');
         }
     };
@@ -62,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const res = await fetch(`${API_URL}/auth/login`, { method: 'POST', body: form });
             const data = await res.json();
             if (!res.ok) return showAuthError(data.detail || 'Erro ao fazer login');
-            hideAuth(data.user_id, data.name);
+            hideAuth(data.access_token, data.user_id, data.name);
         } catch {
             showAuthError('Erro de conexão com o servidor');
         }
@@ -82,7 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             const data = await res.json();
             if (!res.ok) return showAuthError(data.detail || 'Erro ao cadastrar');
-            hideAuth(data.user_id, data.name);
+            hideAuth(data.access_token, data.user_id, data.name);
         } catch {
             showAuthError('Erro de conexão com o servidor');
         }
@@ -92,11 +113,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const btnLogout = document.getElementById('btnLogout');
     if (btnLogout) {
-        btnLogout.addEventListener('click', () => {
-            localStorage.removeItem('user_id');
-            localStorage.removeItem('user_name');
-            authOverlay.classList.remove('hidden');
-        });
+        btnLogout.addEventListener('click', logout);
     }
 
     menuItems.forEach(item => {
@@ -230,7 +247,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const fetchOverview = async (silent = false) => {
         try {
-            const res = await fetch(`${API_URL}/transactions/?user_id=${localStorage.getItem('user_id') || 1}`);
+            const res = await authFetch(`${API_URL}/transactions/`);
             if (res.ok) {
                 const transactions = await res.json();
 
@@ -283,7 +300,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Busca e renderiza transações reais na aba Transactions
     const fetchTransactions = async () => {
         try {
-            const res = await fetch(`${API_URL}/transactions/?user_id=${localStorage.getItem('user_id') || 1}`);
+            const res = await authFetch(`${API_URL}/transactions/`);
             if (!res.ok) return;
             const transactions = await res.json();
             renderTransactions(transactions);
@@ -324,7 +341,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 tabs.forEach(t => t.classList.remove('active'));
                 tab.classList.add('active');
                 const filter = tab.textContent.trim().toLowerCase();
-                const res = await fetch(`${API_URL}/transactions/?user_id=${localStorage.getItem('user_id') || 1}`);
+                const res = await authFetch(`${API_URL}/transactions/`);
                 if (!res.ok) return;
                 const all = await res.json();
                 const filtered = filter === 'all' ? all
@@ -336,15 +353,12 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    // Load initial data
-    fetchOverview();
-
     const fetchUser = async () => {
         try {
-            const res = await fetch(`${API_URL}/transactions/?user_id=${localStorage.getItem('user_id') || 1}`);
+            const res = await authFetch(`${API_URL}/transactions/`);
             if (!res.ok) return;
 
-            const userRes = await fetch(`${API_URL}/users/${localStorage.getItem('user_id') || 1}`);
+            const userRes = await authFetch(`${API_URL}/users/me`);
             if (!userRes.ok) return;
             const user = await userRes.json();
 
@@ -362,8 +376,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Expõe fetchOverview globalmente para poder ser chamada de qualquer lugar
     window.fetchOverview = fetchOverview;
 
-    // Load initial data
-    fetchOverview();
+    if (getToken()) {
+        fetchOverview();
+    }
 
     // ==========================================
     // CHART.JS LOGIC (Overview Dashboard)
@@ -559,10 +574,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
             try {
                 // Call real AI backend
-                const res = await fetch(`${API_URL}/ai/parse`, {
+                const res = await authFetch(`${API_URL}/ai/parse`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: text, user_id: parseInt(localStorage.getItem('user_id') || 1) })
+                    body: JSON.stringify({ message: text })
                 });
 
                 typingMsg.remove(); // Remove thinking message
@@ -579,7 +594,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     chatArea.insertAdjacentHTML('beforeend', aiHtml);
 
                     if (data.action_taken) {
-                        showToast('Transação registrada com sucesso! 💰', 'success');
+                        showToast('Transação registrada com sucesso!', 'success');
                         fetchOverview(true);
                     }
                 } else {
@@ -643,7 +658,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Goals Actions
     handleAction('main#goals-dashboard .header-actions .btn-primary', 'Opening Goal Creator...', 'info');
-    handleAction('.goal-suggestion .btn-secondary', 'Bonus of $1,200 applied to your goal! 🎉', 'success');
+    handleAction('.goal-suggestion .btn-secondary', 'Bonus of $1,200 applied to your goal!', 'success');
     handleAction('.goal-header .icon-btn', 'Goal options menu opened.', 'info');
     handleAction('.add-goal-card', 'Opening Goal Creator...', 'info');
 

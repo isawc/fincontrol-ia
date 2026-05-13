@@ -61,7 +61,6 @@ class GoalResponse(BaseModel):
 
 class AIParseRequest(BaseModel):
     message: str
-    user_id: int = 1
 
 
 class AIParseResponse(BaseModel):
