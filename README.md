@@ -27,8 +27,6 @@ A API interpreta a mensagem, identifica se é receita ou despesa, classifica a c
 
 ## Screenshots
 
-> Para exibir as imagens abaixo no GitHub, salve os prints na pasta `docs/screenshots/` com os mesmos nomes usados aqui.
-
 | Login | Cadastro |
 | --- | --- |
 | ![Tela de login](docs/screenshots/login.png) | ![Tela de cadastro](docs/screenshots/register.png) |
