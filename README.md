@@ -1,31 +1,59 @@
 # FinControl IA
 
-Plataforma de controle financeiro pessoal com dashboard web, autenticação JWT, registro de transações e integração com IA para interpretar mensagens financeiras.
+Plataforma de controle financeiro pessoal com dashboard web, autenticação JWT, registro de transações e assistente com IA para interpretar mensagens financeiras em linguagem natural.
 
-O projeto foi desenvolvido como trabalho acadêmico e também como evolução prática de backend, frontend e integração com serviços externos.
+O projeto nasceu como uma evolução de um trabalho acadêmico e foi reestruturado para funcionar como uma aplicação completa: frontend, API, banco de dados, integração com IA e bot no Telegram.
 
-## Sobre o Projeto
+## Links
 
-A proposta do FinControl IA é permitir que o usuário acompanhe receitas, despesas e saldo em uma interface web, além de registrar movimentações financeiras a partir de mensagens em linguagem natural.
+| Ambiente | Link |
+| --- | --- |
+| Aplicação web | [fincontrol-ia.vercel.app](https://fincontrol-ia.vercel.app/) |
+| API em produção | [fincontrol-ia.onrender.com](https://fincontrol-ia.onrender.com/) |
+| Documentação Swagger | [fincontrol-ia.onrender.com/docs](https://fincontrol-ia.onrender.com/docs) |
+| Bot Telegram | [@IaFinControl_Bot](https://t.me/IaFinControl_Bot) |
 
-Exemplo:
+## Demonstração
+
+O usuário pode registrar movimentações manualmente pelo dashboard ou escrever uma mensagem comum para a IA, como:
 
 ```text
-gastei 35 reais no mercado
+gastei 75 reais no supermercado hoje
+recebi 2000 do salário
+ganhei 89 centavos
 ```
 
-A IA interpreta a mensagem, identifica valor, tipo, categoria e descrição, e registra a transação no sistema.
+A API interpreta a mensagem, identifica se é receita ou despesa, classifica a categoria e salva a transação no banco de dados.
+
+## Screenshots
+
+> Para exibir as imagens abaixo no GitHub, salve os prints na pasta `docs/screenshots/` com os mesmos nomes usados aqui.
+
+| Login | Cadastro |
+| --- | --- |
+| ![Tela de login](docs/screenshots/login.png) | ![Tela de cadastro](docs/screenshots/register.png) |
+
+| Dashboard | Transações |
+| --- | --- |
+| ![Dashboard financeiro](docs/screenshots/dashboard.png) | ![Lista de transações](docs/screenshots/transactions.png) |
+
+| Bot Telegram |
+| --- |
+| ![Bot Telegram](docs/screenshots/telegram-bot.png) |
 
 ## Funcionalidades
 
 - Cadastro e login de usuários
 - Autenticação com JWT
-- Listagem de transações por usuário autenticado
+- Rotas financeiras protegidas por token
 - Registro manual de receitas e despesas
-- Registro de transações com apoio de IA
-- Dashboard com saldo, gráfico por categoria e últimas movimentações
-- Bot do Telegram integrado à API
-- Banco de dados SQLite em desenvolvimento
+- Registro de transações com IA usando linguagem natural
+- Dashboard com saldo total, gráfico por categoria e últimas movimentações
+- Filtro visual de receitas e despesas
+- Bot no Telegram integrado ao fluxo financeiro
+- Documentação automática com Swagger
+- Deploy do frontend na Vercel
+- Deploy da API no Render
 
 ## Tecnologias
 
@@ -36,32 +64,71 @@ A IA interpreta a mensagem, identifica valor, tipo, categoria e descrição, e r
 | Autenticação | JWT, Passlib, Bcrypt |
 | IA | Groq |
 | Bot | python-telegram-bot |
-| Banco | SQLite |
+| Banco de dados | SQLite |
+| Deploy | Vercel, Render |
 
-## Estrutura
+## Arquitetura
+
+```text
+Usuário
+  |
+  | acessa
+  v
+Frontend Vercel
+  |
+  | requisições HTTP com JWT
+  v
+API FastAPI no Render
+  |
+  | salva e consulta dados
+  v
+SQLite
+
+Telegram Bot
+  |
+  | envia mensagens financeiras
+  v
+API / IA
+```
+
+## Estrutura do Projeto
 
 ```text
 fincontrol-ia/
 ├── app/
 │   ├── routers/
+│   │   ├── ai.py
+│   │   ├── auth.py
+│   │   ├── transactions.py
+│   │   └── users.py
 │   ├── ai_parser.py
 │   ├── auth.py
 │   ├── database.py
 │   ├── main.py
 │   ├── models.py
 │   └── schemas.py
+├── docs/
+│   └── screenshots/
 ├── legacy/
 │   └── fincontrol_backend/
-├── docs/
 ├── prototipo/
 ├── index.html
 ├── script.js
 ├── styles.css
 ├── bot.py
+├── Procfile
+├── DEPLOY.md
 └── requirements.txt
 ```
 
-## Como Rodar
+## Como Rodar Localmente
+
+Clone o repositório:
+
+```powershell
+git clone https://github.com/isawc/fincontrol-ia.git
+cd fincontrol-ia
+```
 
 Crie e ative o ambiente virtual:
 
@@ -76,7 +143,7 @@ Instale as dependências:
 pip install -r requirements.txt
 ```
 
-Configure o `.env`:
+Crie um arquivo `.env` baseado no `.env.example`:
 
 ```env
 DATABASE_URL=sqlite:///./fincontrol.db
@@ -84,6 +151,7 @@ SECRET_KEY=sua-chave-secreta
 GROQ_API_KEY=sua-chave-groq
 GROQ_MODEL=llama-3.3-70b-versatile
 MAX_TOKENS=1500
+TELEGRAM_BOT_TOKEN=seu-token-do-telegram
 ```
 
 Inicie a API:
@@ -98,30 +166,64 @@ Acesse a documentação:
 http://127.0.0.1:8000/docs
 ```
 
-Para testar o frontend, abra o arquivo `index.html` no navegador.
+Para testar o frontend localmente, abra o arquivo `index.html` no navegador.
 
-As instruções de publicação estão em [`DEPLOY.md`](DEPLOY.md).
+## Principais Endpoints
+
+| Método | Rota | Descrição |
+| --- | --- | --- |
+| `POST` | `/auth/register` | Cria uma conta e retorna um token JWT |
+| `POST` | `/auth/login` | Autentica o usuário |
+| `GET` | `/users/me` | Retorna os dados do usuário autenticado |
+| `GET` | `/transactions/` | Lista as transações do usuário |
+| `POST` | `/transactions/` | Cria uma nova transação |
+| `DELETE` | `/transactions/{id}` | Remove uma transação |
+| `POST` | `/ai/parse` | Interpreta uma mensagem financeira com IA |
+
+## Exemplo de Uso da IA
+
+Requisição:
+
+```json
+{
+  "message": "gastei 75 reais no supermercado hoje"
+}
+```
+
+Resposta esperada:
+
+```json
+{
+  "reply": "Despesa registrada com sucesso.",
+  "action_taken": true,
+  "transaction": {
+    "amount": 75,
+    "type": "expense",
+    "category": "Alimentação",
+    "description": "Gastos no supermercado"
+  }
+}
+```
 
 ## Desafios e Aprendizados
 
-Durante o desenvolvimento, uma das primeiras melhorias foi trocar o uso de `user_id` enviado pelo frontend por autenticação com JWT. No início, as rotas recebiam o ID do usuário pela URL, mas isso deixava o fluxo frágil. A solução foi proteger as rotas financeiras e fazer o backend identificar o usuário pelo token enviado no header `Authorization`.
+Uma das primeiras decisões técnicas foi trocar o envio de `user_id` pelo frontend por autenticação com JWT. No início, algumas rotas dependiam de um ID fixo, o que funcionava para teste, mas não representava um fluxo real de login. A solução foi proteger as rotas financeiras e fazer o backend identificar o usuário pelo token enviado no header `Authorization`.
 
-Também precisei lidar com um problema de compatibilidade no `bcrypt` durante o cadastro de usuários. A correção foi fixar uma versão estável no `requirements.txt`, garantindo que o hash de senha funcionasse corretamente no ambiente local.
+Outro desafio foi conectar o dashboard a dados reais. A interface começou com valores estáticos, mas depois o saldo, o gráfico por categoria e a lista de últimas movimentações passaram a ser calculados a partir das transações retornadas pela API.
 
-Outro ponto importante foi conectar o dashboard a dados reais. A primeira versão tinha valores fixos na tela; depois o saldo, o gráfico por categoria e a lista de últimas transações passaram a ser calculados a partir da API.
+Também houve um problema de compatibilidade com `bcrypt` durante o cadastro de usuários. A correção foi fixar uma versão estável no `requirements.txt`, garantindo que o hash de senha funcionasse no ambiente local e em produção.
 
-Além disso, alguns arquivos apresentaram problema de encoding em textos com acentos. Corrigir isso foi importante para deixar o Swagger, o README e a interface mais profissionais.
+Na parte de deploy, o projeto foi separado em dois ambientes: frontend na Vercel e backend no Render. Essa divisão deixou o projeto mais próximo de uma arquitetura real, com o frontend consumindo uma API publicada.
 
-## Status
+## Melhorias Futuras
 
-Projeto em desenvolvimento.
-
-Próximas melhorias previstas:
-
-- Melhorar o formulário de cadastro de transações
-- Evoluir a confirmação de transações feitas por IA
-- Preparar deploy do backend e frontend
-- Documentar o fluxo do bot Telegram
+- Adicionar edição de transações
+- Melhorar os filtros por período e categoria
+- Criar painel específico para metas financeiras
+- Persistir o histórico do chat com IA
+- Evoluir o bot do Telegram para consultar saldo e últimas movimentações
+- Trocar SQLite por PostgreSQL em produção
+- Ajustar CORS para aceitar apenas os domínios do projeto
 
 ## Observação
 
