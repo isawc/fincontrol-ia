@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // ==========================================
     // SPA NAVIGATION LOGIC
     // ==========================================
-    const API_URL = "http://localhost:8000";
+    const API_URL = "https://fincontrol-ia.onrender.com";
     const menuItems = document.querySelectorAll('.menu-item');
     const dashboardViews = document.querySelectorAll('main.view');
     const aiPanels = document.querySelectorAll('aside.view');
