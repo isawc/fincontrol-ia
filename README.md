@@ -100,6 +100,8 @@ http://127.0.0.1:8000/docs
 
 Para testar o frontend, abra o arquivo `index.html` no navegador.
 
+As instruções de publicação estão em [`DEPLOY.md`](DEPLOY.md).
+
 ## Desafios e Aprendizados
 
 Durante o desenvolvimento, uma das primeiras melhorias foi trocar o uso de `user_id` enviado pelo frontend por autenticação com JWT. No início, as rotas recebiam o ID do usuário pela URL, mas isso deixava o fluxo frágil. A solução foi proteger as rotas financeiras e fazer o backend identificar o usuário pelo token enviado no header `Authorization`.
